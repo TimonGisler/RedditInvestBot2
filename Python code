@@ -1,0 +1,95 @@
+#!/usr/bin/python
+import praw
+import time
+import datetime
+
+acc=0
+lastID=""
+
+
+def bot_login():
+	print("Loggin in...")
+
+
+	r = praw.Reddit(user_agent='Invest bot (by /u/xxxx)',
+                     client_id='xxxxxxxxxxxx', client_secret="xxxxxxxxxxxxxxxxxxxxxx",
+                     username='xxxxxxxx', password='xxxxxxxxxxx')
+	print("Logged in!")
+
+	return r
+
+
+def bot_login2():
+	print("Loggin in...")
+
+
+	r2 = praw.Reddit(user_agent='Invest bot (by /u/xxxx)',
+                     client_id='xxxxxxxxxxxx', client_secret="xxxxxxxxxxxxxxxxxxxxxx",
+                     username='xxxxxxxx', password='xxxxxxxxxxx')
+	print("Logged in!")
+
+	return r2
+
+
+
+
+user = ['xx','xx','xx','xx','xx','xx']
+
+
+def run_bot(r):
+	#globale variable wird verwendet
+	global lastID, kommentiert, acc
+	for us in user:
+		#1 Kommentar von redditor wird geladen
+		for comment in r.redditor(us).comments.new(limit=1):
+			print(us)
+
+			#Zeit wird berechnet
+			now=time.time()
+			age = now - comment.created_utc
+			print("Zeit wurde berechnet")
+
+			#Wenn alter unter 300 sek dann
+			if comment.id != age<300:
+				#wenn !invest kommentiert wurde dann
+				if "!invest" in comment.body:
+
+
+					#Überschreibt "comment" und setzt den Werd auf den Wert von "parent2" damit
+					parent = comment.parent_id
+					parent2 = parent.split('_')[1]
+					comment = r.comment(parent2)
+
+					#Antwortet dem Parentkommentar !invest 100%
+					comment.reply("!invest 100%")
+					print("ES WURDE KOMMENTIERT")
+          
+          #Zählt mit wie vielen accs investiert wurde
+					acc=acc+1
+          
+          
+					if (acc==2):
+						#Wenn Kommentiert wurde macht er nichts für bisschen unter 4 Stunden
+						print("Sleeping für 14300 sekunden...")
+						#Sleep für ein bisschen unter 4 Stunden
+						time.sleep(14300)
+						acc=0
+						break
+
+	print("Sleeping für 6 sekunden...")
+	#Sleep für 6
+	time.sleep(6)
+
+
+r = bot_login()
+r2 = bot_login2()
+while True:
+	try:
+		run_bot(r)
+		print("HEY")
+		run_bot(r2)
+
+
+	except:
+		print("Error")
+		time.sleep(10)
